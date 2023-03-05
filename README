@@ -1,0 +1,15 @@
+ARLEZU – веб-приложение для изучения армянского языка (в разработке). Работой над проектом занимаюсь один – и frontend, и backend частью.
+ 
+Основные технологии, 
+которые использую:
+
+• Frontend:
+React, TypeScript, SCSS, 
+React router DOM, 
+Redux toolkit, RTK query, 
+GitHub
+
+• Backend:
+NodeJS, ExpressJS, 
+Sequelize, PostgreSQL, 
+JWT, Nodemailer

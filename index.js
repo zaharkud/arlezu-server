@@ -17,7 +17,9 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 6000;
 
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://arlezu.ru"]
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, "static")));

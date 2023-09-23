@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 6000;
 
 
 app.use(cors({
-  origin: ["https://arlezu.ru"]
+  origin: ["https://arlezu.ru:80"]
 }));
 app.use(express.json());
 app.use(cookieParser());

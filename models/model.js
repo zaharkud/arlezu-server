@@ -7,7 +7,6 @@ const User = sequelize.define("user", {
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
-  avatar: { type: DataTypes.INTEGER, defaultValue: 1 },
   /* Подтверждение регистрации по почте */
   isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
   activationLink: { type: DataTypes.STRING },
@@ -21,41 +20,33 @@ const Token = sequelize.define("token", {
 const Card = sequelize.define("card", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   word: { type: DataTypes.STRING, allowNull: false },
-  wordTranslation: { type: DataTypes.STRING, allowNull: false },
+  word_translation: { type: DataTypes.STRING, allowNull: false },
   sentence: { type: DataTypes.STRING, allowNull: false },
-  sentenceTranslation: { type: DataTypes.STRING, allowNull: false },
+  sentence_translation: { type: DataTypes.STRING, allowNull: false },
   phonetics: { type: DataTypes.STRING, allowNull: false },
   img: { type: DataTypes.STRING, allowNull: false },
 });
 
-const ActiveCard = sequelize.define("activeCard", {
+const RepeatCard = sequelize.define("repeat_card", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  repeatTime: { type: DataTypes.INTEGER, defaultValue: 1 },
-  isSelected: { type: DataTypes.BOOLEAN, defaultValue: false },
-  userId: { type: DataTypes.INTEGER, defaultValue: 1 },
-  cardId: { type: DataTypes.INTEGER, defaultValue: 1 },
+  repeat_time: { type: DataTypes.INTEGER, defaultValue: 1 },
 });
 
-const DailyAim = sequelize.define("dailyAim", {
+const Statistics = sequelize.define("statistics", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  newCardsAim: { type: DataTypes.INTEGER, defaultValue: 0 },
-  isCompletedNewCardsAim: { type: DataTypes.BOOLEAN, defaultValue: false },
-  repeatCardsAims: { type: DataTypes.INTEGER, defaultValue: 0 },
-  isCompletedRepeatCardsAim: { type: DataTypes.BOOLEAN, defaultValue: false },
+  completed_cards: { type: DataTypes.INTEGER, defaultValue: 0 },
 });
 
-User.hasOne(DailyAim);
-DailyAim.belongsTo(User);
+User.hasOne(Statistics);
+Statistics.belongsTo(User);
 
 User.hasOne(Token);
 Token.belongsTo(User);
 
-// User.hasMany(ActiveCard);
-// ActiveCard.belongsTo(User);
+User.hasMany(RepeatCard);
+RepeatCard.belongsTo(User);
 
-// Card.hasMany(ActiveCard);
-// ActiveCard.belongsTo(Card);
+Card.hasMany(RepeatCard);
+RepeatCard.belongsTo(Card);
 
-
-
-export { User, Token, DailyAim, Card, ActiveCard };
+export { User, Token, Statistics, Card, RepeatCard };

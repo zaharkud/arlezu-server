@@ -1,10 +1,11 @@
 import "dotenv/config.js"
-
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
-
 import { userService } from "../services/userService.js";
 import ApiErorr from "../exceptions/apiError.js";
+
+import { User } from "../models/model.js";
+import { tokenService } from "../services/tokenService.js";
 
 const generateJwt = (id, email, name) => {
   return jwt.sign(
@@ -13,7 +14,6 @@ const generateJwt = (id, email, name) => {
     { expiresIn: "24h" }
   );
 }
-
 class UserController {
 
   /* Регистрация */
@@ -27,7 +27,6 @@ class UserController {
       const userData = await userService.registration(email, password, name);
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true /*secure: true*/ })
       return res.json(userData);
-
     } catch (e) {
       next(e);
     }
@@ -40,7 +39,6 @@ class UserController {
       const userData = await userService.login(email, password);
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true /*secure: true*/ });
       return res.json(userData);
-
     } catch (e) {
       next(e);
     }
@@ -53,7 +51,6 @@ class UserController {
       const token = await userService.logout(refreshToken);
       res.clearCookie("refreshToken");
       return res.json(token);
-
     } catch (e) {
       next(e);
     }
@@ -66,7 +63,6 @@ class UserController {
       const userData = await userService.refresh(refreshToken);
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true /*secure: true*/ });
       return res.json(userData);
-
     } catch (e) {
       next(e);
     }
@@ -78,6 +74,36 @@ class UserController {
       const activationLink = req.params.link;
       userService.activate(activationLink);
       return res.redirect(process.env.CLIENT_URL);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  /* Смена аватарки */
+  async changeAvatar(req, res, next) {
+    try {
+      const { token, avatar } = req.body;
+
+      const userData = tokenService.validateRefreshToken(token);
+      const user = await User.findOne({ where: { id: userData.id } });
+
+      await user.update({ avatar });
+
+      return res.json(user);
+
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getAvatar(req, res, next) {
+    try {
+      const { token } = req.body;
+
+      const userData = tokenService.validateRefreshToken(token);
+      const user = await User.findOne({ where: { id: userData.id } });
+
+      return res.json(user.avatar);
 
     } catch (e) {
       next(e);
@@ -88,13 +114,10 @@ class UserController {
   //   const token = generateJwt(req.user.id, req.user.email, req.user.password);
   //   return res.json({ token });
   // }
-
   // async getById(req, res) {
   //   const { id } = req.params;
   //   const card = await Card.findOne({ where: { id } })
-
   //   return res.json(card);
   // }
 }
-
 export const userController = new UserController();

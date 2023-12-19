@@ -41,12 +41,7 @@ app.use(errorMiddleware);
 
 const start = async () => {
   try {
-    await sequelize.authenticate().then(() => {
-      console.log('Connection has been established successfully.');
-    })
-      .catch(err => {
-        return JSON.stringify({ errro: "connect re" })
-      });
+    await sequelize.authenticate();
 
     await sequelize.sync({ alter: true });
 

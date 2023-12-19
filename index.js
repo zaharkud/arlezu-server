@@ -29,7 +29,7 @@ const reduceCardsRepeatTime = schedule.scheduleJob({ hour: 11, minute: 52 }, asy
 });
 
 app.use(cors({
-  origin: ["https://arlezu.ru", "http://localhost:3000"],
+  origin: ["https://arlezu.ru", "http://localhost:3000", "http://localhost:5000"],
   default: "https://arlezu.ru"
 }));
 app.use(express.json());
@@ -41,7 +41,13 @@ app.use(errorMiddleware);
 
 const start = async () => {
   try {
-    await sequelize.authenticate();
+    await sequelize.authenticate().then(() => {
+      console.log('Connection has been established successfully.');
+    })
+      .catch(err => {
+        return JSON.stringify({ errro: "connect re" })
+      });
+
     await sequelize.sync({ alter: true });
 
     app.listen(PORT, () => {
